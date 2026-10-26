@@ -1,1 +1,575 @@
 
+Here are the 10 Python lab programs from your practical record, with the Aim, Algorithm, Program Code, and Output in a simple format you can write in your record. Programs 7 and 9 do not have visible code in the uploaded PDF, so I’ll identify those as missing rather than guess their original contents.
+
+### Program 1: Shape Addition Using Operator Overloading
+
+Aim: To write a Python program to calculate the area of rectangles and add their areas using operator overloading.
+
+Algorithm:
+
+* Define a `Shape` class with an area variable.
+
+* Define a `Rectangle` class that inherits from `Shape`.
+
+* Calculate the rectangle's area using length × width.
+
+* Overload the `+` operator using `__add__()`.
+
+* Add two rectangle areas and display the result.
+
+Program:
+
+```python
+
+class Shape:
+    def __init__(self):
+        self._area = 0
+
+    def get_area(self):
+        return self._area
+
+    def __add__(self, other):
+        result = Shape()
+        result._area = self.get_area() + other.get_area()
+        return result
+
+    def __str__(self):
+        return f"Shape with area: {self._area}"
+
+class Rectangle(Shape):
+    def __init__(self, length, width):
+        super().__init__()
+        self._length = length
+        self._width = width
+        self._area = length * width
+
+    def __str__(self):
+        return f"Rectangle area: {self._area}"
+
+rect1 = Rectangle(4, 6)
+rect2 = Rectangle(3, 5)
+
+print(rect1)
+print(rect2)
+
+combined = rect1 + rect2
+print("Combined area:", combined.get_area())
+```
+
+Output:
+
+```text
+Rectangle area: 24
+Rectangle area: 15
+Combined area: 39
+```
+
+### Program 2: File Handling Using `seek()` and `read()`
+
+Aim: To write a Python program to write data into a file and read its contents from a specified position.
+
+Algorithm:
+
+* Create a text file named `example.txt`.
+
+* Write a sentence into the file.
+
+* Open the file in read mode.
+
+* Use `seek()` to move to position 12.
+
+* Read and display the remaining contents.
+
+Program:
+
+```python
+
+filename = "example.txt"
+
+try:
+    with open(filename, "w") as file:
+        file.write("Example program of python\n")
+
+    print("Content successfully written to", filename)
+
+    with open(filename, "r") as file:
+        seek_position = 12
+        file.seek(seek_position)
+        content = file.read()
+
+        print("Content read from position:", seek_position)
+        print(content)
+
+except IOError as e:
+    print("File error:", e)
+```
+
+Output:
+
+```text
+Content successfully written to example.txt
+Content read from position: 12
+am of python
+```
+
+### Program 3: Fibonacci Series Using Generator and Decorator
+
+Aim: To write a Python program to generate a Fibonacci series using a generator function and a decorator for logging.
+
+Algorithm:
+
+* Import the `functools` and `logging` modules.
+
+* Define a decorator to log function calls.
+
+* Define a generator function to generate Fibonacci numbers.
+
+* Generate the first 10 terms.
+
+* Display the series.
+
+Program:
+
+```python
+
+import functools
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s - %(message)s"
+)
+
+def log_function_call(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        logging.info("Calling function: %s", func.__name__)
+        result = func(*args, **kwargs)
+        logging.info("Function completed.")
+        return result
+    return wrapper
+
+@log_function_call
+def fibonacci_generation(n_terms):
+    a, b = 0, 1
+    for _ in range(n_terms):
+        yield a
+        a, b = b, a + b
+
+print("Generating Fibonacci Series:")
+for num in fibonacci_generation(10):
+    print(num)
+```
+
+Output:
+
+```text
+Generating Fibonacci Series:
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+```
+
+### Program 4: Multithreading Using Lock
+
+Aim: To write a Python program to demonstrate multithreading and synchronization using a thread lock.
+
+Algorithm:
+
+* Import the `threading` module.
+
+* Initialize a shared variable to 2.
+
+* Create a lock object.
+
+* Define increment and decrement functions.
+
+* Use the lock while modifying the shared variable.
+
+* Create and start two threads.
+
+* Wait for both threads to finish and display the final value.
+
+Program:
+
+```python
+
+import threading
+
+shared_variable = 2
+lock = threading.Lock()
+
+def increment():
+    global shared_variable
+    for _ in range(100000):
+        with lock:
+            shared_variable += 1
+
+def decrement():
+    global shared_variable
+    for _ in range(100000):
+        with lock:
+            shared_variable -= 1
+
+thread1 = threading.Thread(target=increment)
+thread2 = threading.Thread(target=decrement)
+
+thread1.start()
+thread2.start()
+
+thread1.join()
+thread2.join()
+
+print("Final value:", shared_variable)
+```
+
+Output:
+
+```text
+Final value: 2
+```
+
+### Program 5: Data Cleaning and Filtering Using Pandas
+
+Aim: To write a Python program to handle missing values, sort data, and filter records using Pandas.
+
+Algorithm:
+
+* Import the Pandas library.
+
+* Read the CSV file into a DataFrame.
+
+* Display the original data and missing values.
+
+* Replace missing numeric values with the column mean.
+
+* Replace missing text values with `Unknown`.
+
+* Sort the data by age and city.
+
+* Filter records based on score, city, and age.
+
+* Display the results.
+
+Program:
+
+```python
+
+import pandas as pd
+
+df = pd.read_csv("your_data.csv")
+
+print("Original DataFrame:")
+print(df.head())
+
+print("Missing values before cleaning:")
+print(df.isnull().sum())
+
+# Fill missing numeric values with mean
+for col in df.select_dtypes(include="number").columns:
+    df[col] = df[col].fillna(df[col].mean())
+
+# Fill missing text values
+for col in df.select_dtypes(include="object").columns:
+    df[col] = df[col].fillna("Unknown")
+
+print("Data after cleaning:")
+print(df.head())
+
+if "Age" in df.columns:
+    print("Sorted by Age:")
+    print(df.sort_values(by="Age").head())
+
+if "City" in df.columns and "Age" in df.columns:
+    print("Sorted by City and Age:")
+    print(df.sort_values(
+        by=["City", "Age"],
+        ascending=[True, False]
+    ).head())
+
+if "Score" in df.columns:
+    print("Scores greater than 70:")
+    print(df[df["Score"] > 70])
+
+if "City" in df.columns and "Age" in df.columns:
+    print("New York residents under 30:")
+    print(df[(df["City"] == "New York") &
+             (df["Age"] < 30)])
+```
+
+Note: Create `your_data.csv` with columns named `Age`, `City`, and `Score` (and any other data columns) before running this program.
+
+Output: The program displays the original data, missing-value counts, cleaned data, sorted records, and filtered records.
+
+### Program 6: Data Visualization Using Matplotlib
+
+Aim: To write a Python program to visualize data using line, bar, pie, and scatter plots.
+
+Algorithm:
+
+* Import Matplotlib and NumPy.
+
+* Define categories and values.
+
+* Generate random data for the scatter plot.
+
+* Create four subplots.
+
+* Draw line, bar, pie, and scatter plots.
+
+* Add titles and labels.
+
+* Display all plots.
+
+Program:
+
+```python
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+categories = ['A', 'B', 'C', 'D']
+values = [25, 40, 30, 55]
+
+x_data = np.random.rand(50) * 10
+y_data = np.random.rand(50) * 20
+
+time_points = np.arange(1, 6)
+series_data = [10, 12, 8, 15, 11]
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# Line plot
+axes[0, 0].plot(time_points, series_data, marker='o')
+axes[0, 0].set_title("Line Plot")
+axes[0, 0].set_xlabel("Time Point")
+axes[0, 0].set_ylabel("Value")
+axes[0, 0].grid(True)
+
+# Bar plot
+axes[0, 1].bar(categories, values)
+axes[0, 1].set_title("Bar Plot")
+axes[0, 1].set_xlabel("Category")
+axes[0, 1].set_ylabel("Count")
+
+# Pie plot
+axes[1, 0].pie(values, labels=categories, autopct='%1.1f%%')
+axes[1, 0].set_title("Pie Plot")
+
+# Scatter plot
+axes[1, 1].scatter(x_data, y_data)
+axes[1, 1].set_title("Scatter Plot")
+axes[1, 1].set_xlabel("X-axis")
+axes[1, 1].set_ylabel("Y-axis")
+axes[1, 1].grid(True)
+
+plt.tight_layout()
+plt.show()
+```
+
+Output: A window displays four graphs: a line plot, bar plot, pie chart, and scatter plot.
+
+### Program 7: Not Available in the Record
+
+The uploaded PDF does not show the program code or title for Program 7. I cannot accurately provide its original aim, algorithm, or code without that information.
+
+### Program 8: MySQL Database Operations
+
+Aim: To write a Python program to connect to a MySQL database and perform CREATE, INSERT, SELECT, UPDATE, and DELETE operations.
+
+Algorithm:
+
+* Import the `mysql.connector` module.
+
+* Connect to the MySQL database.
+
+* Create a student table.
+
+* Insert a student record.
+
+* Retrieve and display the records.
+
+* Update the student's age.
+
+* Delete the student record.
+
+* Close the database connection.
+
+Program:
+
+```python
+
+import mysql.connector
+
+conn = mysql.connector.connect(
+    host="localhost",
+    user="scott",
+    password="tiger",
+    database="testdb"
+)
+
+cursor = conn.cursor()
+
+# Create table
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT,
+    course VARCHAR(100)
+)
+""")
+print("Table created successfully.")
+
+# Insert record
+cursor.execute(
+    "INSERT INTO students (name, age, course) VALUES (%s, %s, %s)",
+    ("John", 21, "Python")
+)
+conn.commit()
+print("Record inserted successfully.")
+
+# Select records
+cursor.execute("SELECT * FROM students")
+print("Student records:")
+for row in cursor.fetchall():
+    print(row)
+
+# Update record
+cursor.execute(
+    "UPDATE students SET age = %s WHERE name = %s",
+    (22, "John")
+)
+conn.commit()
+print("Record updated successfully.")
+
+# Delete record
+cursor.execute(
+    "DELETE FROM students WHERE name = %s",
+    ("John",)
+)
+conn.commit()
+print("Record deleted successfully.")
+
+cursor.close()
+conn.close()
+print("MySQL connection closed.")
+```
+
+Output:
+
+```text
+Table created successfully.
+Record inserted successfully.
+Student records:
+(1, 'John', 21, 'Python')
+Record updated successfully.
+Record deleted successfully.
+MySQL connection closed.
+```
+
+Note: Replace `scott`, `tiger`, and `testdb` with your actual MySQL username, password, and database name if necessary. Install the connector using `pip install mysql-connector-python`.
+
+### Program 9: Not Available in the Record
+
+The uploaded PDF does not show the title or code for Program 9. Please share a photo of the missing program or its title so I can provide the correct aim, algorithm, and code.
+
+### Program 10: REST API Using FastAPI
+
+Aim: To write a Python program to develop a REST API using FastAPI to retrieve and create user records using GET and POST methods.
+
+Algorithm:
+
+* Import FastAPI and Pydantic.
+
+* Create a FastAPI application.
+
+* Define a User model with ID, name, and email.
+
+* Create an empty list to store user records.
+
+* Define a GET endpoint to retrieve all users.
+
+* Define a POST endpoint to add a new user.
+
+* Run the application and test the endpoints.
+
+Program:
+
+```python
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI(title="User API")
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+
+users = []
+
+# GET method
+@app.get("/users")
+def get_users():
+    return users
+
+# POST method
+@app.post("/users")
+def create_user(user: User):
+    users.append(user)
+    return {
+        "message": "User created successfully",
+        "user": user
+    }
+```
+
+Output:
+
+GET `/users` initially:
+
+```json
+[]
+```
+
+POST `/users` request body:
+
+```json
+{
+  "id": 1,
+  "name": "John",
+  "email": "john@gmail.com"
+}
+```
+
+Response:
+
+```json
+{
+  "message": "User created successfully",
+  "user": {
+    "id": 1,
+    "name": "John",
+    "email": "john@gmail.com"
+  }
+}
+```
+
+To run the program:
+
+```bash
+pip install fastapi uvicorn
+uvicorn main:app --reload
+```
+
+Open `http://127.0.0.1:8000/docs` to test the API. Save the code as `main.py`.
+
+Record preparation note: Programs 1–6, 8, and 10 are provided above. Programs 7 and 9 are not visible in your original PDF, so their original code remains unidentified.
